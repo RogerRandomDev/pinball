@@ -44,10 +44,12 @@ stretch = true
 [node name="Viewport" type="Viewport" parent="0/M"]
 size = Vector2( 384, 600 )
 world = SubResource( 2 )
+handle_input_locally = false
 msaa = 4
 fxaa = true
 debanding = true
 usage = 0
+render_target_update_mode = 3
 
 [node name="Node2D" parent="0/M/Viewport" instance=ExtResource( 1 )]
 

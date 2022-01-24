@@ -19,7 +19,7 @@ func _input(_event):
 	if Input.is_action_just_pressed("ui_left")&&!paddle_side:
 		is_active = true
 		if ball!=null:
-			ball.apply_central_impulse(paddle_force*(1/get_tip().distance_to(ball.position))*32)
+			ball.apply_central_impulse(paddle_force*(1/get_tip().distance_to(ball.position))*32).rotated(rotation)
 		target_angle = -30
 	if Input.is_action_just_released("ui_left")&&!paddle_side:
 		target_angle= 15
@@ -27,7 +27,7 @@ func _input(_event):
 	if Input.is_action_just_pressed("ui_right")&&paddle_side:
 		is_active = true
 		if ball!=null:
-			ball.apply_central_impulse(paddle_force*(1/get_tip().distance_to(ball.position))*32)
+			ball.apply_central_impulse(paddle_force*(1/get_tip().distance_to(ball.position))*32).rotated(rotation)
 		target_angle = 30
 	if Input.is_action_just_released("ui_right")&&paddle_side:
 		target_angle= -15

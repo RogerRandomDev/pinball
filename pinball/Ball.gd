@@ -26,7 +26,9 @@ func _on_check_body_entered(body):
 	if body.is_in_group("Paddle"):
 		body.has_ball=true
 		body.ball = self
-		if body.target_angle!=body.rotation_degrees:apply_central_impulse(body.paddle_force*int(body.is_active&&abs(body.rotation_degrees-body.target_angle)>1)*(1/body.get_tip().distance_to(position))*32)
+		if body.target_angle!=body.rotation_degrees:apply_central_impulse(
+			(body.paddle_force*int(body.is_active&&abs(body.rotation_degrees-body.target_angle)>1)*(1/body.get_tip().distance_to(position))*32).rotated(body.rotation)
+			)
 	
 func _input(_event):
 	if Input.is_key_pressed(KEY_SPACE):
@@ -37,3 +39,7 @@ func _on_check_body_exited(body):
 	if body.is_in_group("Paddle"):
 		body.has_ball=false
 		body.ball = null
+
+
+func _on_check_area_entered(area):
+	if !area.get_parent().is_in_group("Interaction"):return
