@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Ball.gd" type="Script" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+
+[sub_resource type="PhysicsMaterial" id=2]
+friction = 0.5
+bounce = 0.5
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 16.0
+
+[sub_resource type="CircleShape2D" id=3]
+radius = 17.0
+
+[node name="Ball" type="RigidBody2D"]
+physics_material_override = SubResource( 2 )
+continuous_cd = 2
+contact_monitor = true
+can_sleep = false
+script = ExtResource( 1 )
+bounce_force = 0.9
+
+[node name="Col" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="check" type="Area2D" parent="."]
+
+[node name="Col" type="CollisionShape2D" parent="check"]
+shape = SubResource( 3 )
+
+[node name="Sprite" type="Sprite" parent="."]
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+
+[connection signal="body_entered" from="check" to="." method="_on_check_body_entered"]
+[connection signal="body_exited" from="check" to="." method="_on_check_body_exited"]

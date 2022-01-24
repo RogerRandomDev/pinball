@@ -1,0 +1,67 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Ball.tscn" type="PackedScene" id=1]
+[ext_resource path="res://paddle.tscn" type="PackedScene" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 10, 600 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 256, 16 )
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Ball" parent="." instance=ExtResource( 1 )]
+position = Vector2( 392, 240 )
+gravity_scale = 2.0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." groups=["Bouncer"]]
+position = Vector2( 0, -600 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Col" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PoolVector2Array( 512, 112, 504, 64, 488, 40, 448, 16, 368, 8, 120, 8, 64, 16, 24, 40, 8, 64, 0, 112, 0, -32, 512, -32 )
+
+[node name="Polygon2D" type="Polygon2D" parent="StaticBody2D"]
+polygon = PoolVector2Array( 512, 112, 504, 64, 488, 40, 448, 16, 368, 8, 120, 8, 64, 16, 24, 40, 8, 64, 0, 112, 0, -32, 512, -32 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="border" type="StaticBody2D" parent="."]
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="border"]
+position = Vector2( -8, 0 )
+shape = SubResource( 1 )
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="border"]
+position = Vector2( 520, 0 )
+shape = SubResource( 1 )
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="border"]
+position = Vector2( 256, -608 )
+shape = SubResource( 2 )
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="border"]
+position = Vector2( 256, 632 )
+shape = SubResource( 2 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 0, -600 )
+anchor_mode = 0
+current = true
+zoom = Vector2( 1.333, 2 )
+
+[node name="StaticBody2D2" parent="." instance=ExtResource( 2 )]
+position = Vector2( 64, 512 )
+paddle_force = Vector2( 0, -1200 )
+
+[node name="StaticBody2D3" parent="." instance=ExtResource( 2 )]
+position = Vector2( 448, 512 )
+paddle_side = true
+paddle_force = Vector2( 0, -1200 )
