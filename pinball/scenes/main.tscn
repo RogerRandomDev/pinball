@@ -1,0 +1,579 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://scenes/Ball.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/paddle.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scripts/object_data.gd" type="Script" id=3]
+[ext_resource path="res://scripts/main.gd" type="Script" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 24, 600 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 256, 16 )
+
+[sub_resource type="CircleShape2D" id=3]
+radius = 0.01
+
+[sub_resource type="CircleShape2D" id=4]
+radius = 0.01
+
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 16, 16 )
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource( 4 )
+actions = [ [ false, null, null, false, false, false ] ]
+action_point_rewards = [ -1 ]
+
+[node name="Ball" parent="." instance=ExtResource( 1 )]
+position = Vector2( 256, 600 )
+mass = 0.75
+gravity_scale = 2.0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2( 0, -600 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Col" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PoolVector2Array( 496, 112, 488, 64, 480, 40, 448, 16, 368, 8, 120, 8, 64, 16, 32, 40, 24, 64, 16, 112, 16, 64, 16, -32, 496, -32 )
+
+[node name="Polygon2D" type="Polygon2D" parent="StaticBody2D"]
+polygon = PoolVector2Array( 496, 112, 488, 64, 480, 40, 448, 16, 368, 8, 120, 8, 64, 16, 32, 40, 24, 64, 16, 112, 16, 64, 16, -32, 496, -32 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="border" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="border"]
+position = Vector2( -8, 0 )
+shape = SubResource( 1 )
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="border"]
+position = Vector2( 520, 0 )
+shape = SubResource( 1 )
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="border"]
+position = Vector2( 256, -608 )
+shape = SubResource( 2 )
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="border"]
+position = Vector2( 256, 632 )
+shape = SubResource( 2 )
+
+[node name="Polygon2D" type="Polygon2D" parent="border"]
+polygon = PoolVector2Array( 16, -600, 496, -600, 496, 616, 536, 616, 536, -624, -24, -624, -24, 616, 16, 616 )
+
+[node name="Lpaddle" parent="." instance=ExtResource( 2 )]
+position = Vector2( 128, 520 )
+paddle_force = Vector2( 0, -1200 )
+
+[node name="Rpaddle" parent="." instance=ExtResource( 2 )]
+position = Vector2( 384, 520 )
+scale = Vector2( -1, 1 )
+paddle_side = true
+paddle_force = Vector2( 0, -1200 )
+
+[node name="screen center" type="StaticBody2D" parent="."]
+position = Vector2( 256, 0 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="screen center"]
+shape = SubResource( 3 )
+disabled = true
+
+[node name="DampedSpringJoint2D" type="DampedSpringJoint2D" parent="."]
+position = Vector2( 256, 0 )
+node_a = NodePath("../screen center")
+node_b = NodePath("../Cam")
+length = 1.0
+stiffness = 30.0
+
+[node name="Cam" type="RigidBody2D" parent="."]
+position = Vector2( 256, 0 )
+
+[node name="Camera2D" type="Camera2D" parent="Cam"]
+offset = Vector2( 0, 0.005 )
+current = true
+zoom = Vector2( 1.333, 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Cam"]
+shape = SubResource( 4 )
+disabled = true
+
+[node name="objects" type="Node2D" parent="."]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 64, 384 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+bounce_force = 256.0
+dont_hit_bottom = true
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D"]
+polygon = PoolVector2Array( 0, 32, 8, 64, 40, -8, 16, -56, 0, -48 )
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D"]
+polygon = PoolVector2Array( 0, 32, 8, 64, 40, -8, 16, -56, 0, -48 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D14" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 448, 384 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true,
+"_editor_description_": ""
+}
+bounce_force = 256.0
+dont_hit_bottom = true
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D14"]
+polygon = PoolVector2Array( 0, 32, -8, 64, -40, -8, -16, -64, 0, -48 )
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D14"]
+polygon = PoolVector2Array( 0, 32, -8, 64, -40, -8, -16, -64, 0, -48 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 496, -168 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+bounce_force = 8.0
+dont_hit_bottom = true
+point_count_for_hit = 25
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D2"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D2"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D8" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 496, -232 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true,
+"_editor_description_": ""
+}
+bounce_force = 8.0
+dont_hit_bottom = true
+point_count_for_hit = 25
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D8"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D8"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D9" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 496, -296 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+bounce_force = 8.0
+dont_hit_bottom = true
+point_count_for_hit = 25
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D9"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D9"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D15" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 80, -288 )
+scale = Vector2( 0.5, 0.5 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+bounce_force = 64.0
+point_count_for_hit = 50
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D15"]
+polygon = PoolVector2Array( -8, 40, 8, 40, 24, 32, 32, 24, 40, 8, 40, -8, 32, -24, 24, -32, 8, -40, -8, -40, -24, -32, -32, -24, -40, -8, -40, 8, -32, 24, -24, 32 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D15"]
+polygon = PoolVector2Array( -8, 40, 8, 40, 24, 32, 32, 24, 40, 8, 40, -8, 32, -24, 24, -32, 8, -40, -8, -40, -24, -32, -32, -24, -40, -8, -40, 8, -32, 24, -24, 32 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D16" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 128, -352 )
+scale = Vector2( 0.5, 0.5 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+bounce_force = 64.0
+point_count_for_hit = 50
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D16"]
+polygon = PoolVector2Array( -8, 40, 8, 40, 24, 32, 32, 24, 40, 8, 40, -8, 32, -24, 24, -32, 8, -40, -8, -40, -24, -32, -32, -24, -40, -8, -40, 8, -32, 24, -24, 32 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D16"]
+polygon = PoolVector2Array( -8, 40, 8, 40, 24, 32, 32, 24, 40, 8, 40, -8, 32, -24, 24, -32, 8, -40, -8, -40, -24, -32, -32, -24, -40, -8, -40, 8, -32, 24, -24, 32 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D18" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 176, -288 )
+scale = Vector2( 0.5, 0.5 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+bounce_force = 64.0
+point_count_for_hit = 50
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D18"]
+polygon = PoolVector2Array( -8, 40, 8, 40, 24, 32, 32, 24, 40, 8, 40, -8, 32, -24, 24, -32, 8, -40, -8, -40, -24, -32, -32, -24, -40, -8, -40, 8, -32, 24, -24, 32 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D18"]
+polygon = PoolVector2Array( -8, 40, 8, 40, 24, 32, 32, 24, 40, 8, 40, -8, 32, -24, 24, -32, 8, -40, -8, -40, -24, -32, -32, -24, -40, -8, -40, 8, -32, 24, -24, 32 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D10" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 496, -360 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+bounce_force = 8.0
+dont_hit_bottom = true
+point_count_for_hit = 25
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D10"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D10"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D5" type="StaticBody2D" parent="objects"]
+position = Vector2( 256, -552 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D5"]
+polygon = PoolVector2Array( 0, 32, -8, 0, -24, -16, -48, -32, -80, -40, 80, -40, 48, -32, 24, -16, 8, 0 )
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D5"]
+polygon = PoolVector2Array( 0, 32, -8, 0, -24, -16, -48, -32, -80, -40, 80, -40, 48, -32, 24, -16, 8, 0 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D4" type="StaticBody2D" parent="objects"]
+position = Vector2( 16, 480 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D4"]
+polygon = PoolVector2Array( 104, 24, 48, 16, 24, 8, 8, -8, 0, -32, 0, 72, 104, 48 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D4"]
+polygon = PoolVector2Array( 104, 24, 48, 16, 24, 8, 8, -8, 0, -32, 0, 72, 104, 48 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D6" type="StaticBody2D" parent="objects"]
+position = Vector2( 496, 480 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D6"]
+polygon = PoolVector2Array( -104, 24, -48, 16, -24, 8, -8, -8, 0, -32, 0, 72, -104, 48 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D6"]
+polygon = PoolVector2Array( -104, 24, -48, 16, -24, 8, -8, -8, 0, -32, 0, 72, -104, 48 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Area2D" type="Area2D" parent="objects"]
+position = Vector2( 480, -192 )
+monitoring = false
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+action_object = true
+action_name = "Action"
+action_value = "[0,0]"
+action_group = "Power"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D"]
+shape = SubResource( 5 )
+
+[node name="Sprite" type="Label" parent="objects/Area2D"]
+margin_left = -24.0
+margin_top = -28.0
+margin_right = -12.0
+margin_bottom = -12.0
+rect_scale = Vector2( 4, 4 )
+text = "T"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StaticBody2D13" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 496, -104 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+bounce_force = 8.0
+dont_hit_bottom = true
+point_count_for_hit = 25
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D13"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D13"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Area2D6" type="Area2D" parent="objects"]
+position = Vector2( 480, -128 )
+monitoring = false
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+action_object = true
+action_name = "Action"
+action_value = "[0,1]"
+action_group = "Power"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D6"]
+shape = SubResource( 5 )
+
+[node name="Sprite" type="Label" parent="objects/Area2D6"]
+margin_left = -24.0
+margin_top = -28.0
+margin_right = -12.0
+margin_bottom = -12.0
+rect_scale = Vector2( 4, 4 )
+text = "S"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Area2D2" type="Area2D" parent="objects"]
+position = Vector2( 480, -320 )
+monitoring = false
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+action_object = true
+action_name = "Action"
+action_value = "[0,2]"
+action_group = "Power"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D2"]
+shape = SubResource( 5 )
+
+[node name="Sprite" type="Label" parent="objects/Area2D2"]
+margin_left = -24.0
+margin_top = -28.0
+margin_right = -12.0
+margin_bottom = -12.0
+rect_scale = Vector2( 4, 4 )
+text = "I"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StaticBody2D11" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 496, -424 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+bounce_force = 8.0
+dont_hit_bottom = true
+point_count_for_hit = 25
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D11"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D11"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Area2D4" type="Area2D" parent="objects"]
+position = Vector2( 480, -384 )
+monitoring = false
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+action_object = true
+action_name = "Action"
+action_value = "[0,3]"
+action_group = "Power"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D4"]
+shape = SubResource( 5 )
+
+[node name="Sprite" type="Label" parent="objects/Area2D4"]
+margin_left = -24.0
+margin_top = -28.0
+margin_right = -12.0
+margin_bottom = -12.0
+rect_scale = Vector2( 4, 4 )
+text = "O"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StaticBody2D12" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 496, -496 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+bounce_force = 8.0
+dont_hit_bottom = true
+point_count_for_hit = 25
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D12"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D12"]
+polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Area2D5" type="Area2D" parent="objects"]
+position = Vector2( 480, -456 )
+monitoring = false
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+action_object = true
+action_name = "Action"
+action_value = "[0,4]"
+action_group = "Power"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D5"]
+shape = SubResource( 5 )
+
+[node name="Sprite" type="Label" parent="objects/Area2D5"]
+margin_left = -24.0
+margin_top = -28.0
+margin_right = -12.0
+margin_bottom = -12.0
+rect_scale = Vector2( 4, 4 )
+text = "P"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Area2D3" type="Area2D" parent="objects"]
+position = Vector2( 480, -256 )
+monitoring = false
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+action_object = true
+action_name = "Action"
+action_value = "[0,5]"
+action_group = "Power"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D3"]
+shape = SubResource( 5 )
+
+[node name="Sprite" type="Label" parent="objects/Area2D3"]
+margin_left = -24.0
+margin_top = -28.0
+margin_right = -12.0
+margin_bottom = -12.0
+rect_scale = Vector2( 4, 4 )
+text = "N"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

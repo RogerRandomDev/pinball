@@ -13,13 +13,17 @@ var target_angle = 15
 var is_active = false
 func _ready():
 	$Col.position.x = (int(!paddle_side)*2-1)*48
-	$Sprite.position.x = (int(!paddle_side)*2-1)*48
+	$Sprite.rect_position.x = -(int(paddle_side))*96
+	$Sprite.flip_h = paddle_side
+	scale.x = 1
 	target_angle = (int(!paddle_side)*2-1)*15
 func _input(_event):
 	if Input.is_action_just_pressed("ui_left")&&!paddle_side:
 		is_active = true
 		if ball!=null:
-			ball.apply_central_impulse(paddle_force*(1/get_tip().distance_to(ball.position))*32).rotated(rotation)
+			var force = (paddle_force*(1/get_tip().distance_to(ball.position))*32).rotated(rotation)
+			ball.apply_central_impulse(force)
+			ball.paddle_hit(force)
 		target_angle = -30
 	if Input.is_action_just_released("ui_left")&&!paddle_side:
 		target_angle= 15
@@ -27,7 +31,9 @@ func _input(_event):
 	if Input.is_action_just_pressed("ui_right")&&paddle_side:
 		is_active = true
 		if ball!=null:
-			ball.apply_central_impulse(paddle_force*(1/get_tip().distance_to(ball.position))*32).rotated(rotation)
+			var force = (paddle_force*(1/get_tip().distance_to(ball.position))*32).rotated(rotation)
+			ball.apply_central_impulse(force)
+			ball.paddle_hit(force)
 		target_angle = 30
 	if Input.is_action_just_released("ui_right")&&paddle_side:
 		target_angle= -15
