@@ -12,8 +12,12 @@ export(String)var action_name=""
 export(String)var action_value=""
 export(String)var action_group=""
 export(int)var point_count_for_hit = 100
+var polygon_pos = Vector2.ZERO
 var active=false
 func _ready():
+	
+	if get_node_or_null("Polygon2D")!=null&&$Polygon2D.get_class()!="Polygon2D":
+		polygon_pos=$Polygon2D.rect_position
 	if action_object:
 		add_to_group(action_name)
 		add_to_group("action_item")
@@ -33,7 +37,11 @@ func disable():
 func bounce_off_of():
 	var tween = Tween.new()
 	add_child(tween)
-	tween.interpolate_property($Polygon2D,"scale",Vector2(1.25,1.25),Vector2.ONE,0.25,Tween.TRANS_BOUNCE)
+	if $Polygon2D.get_class() == 'Polygon2D':
+		tween.interpolate_property($Polygon2D,"scale",Vector2(1.25,1.25),Vector2.ONE,0.25,Tween.TRANS_BOUNCE)
+	else:
+		tween.interpolate_property($Polygon2D,"rect_scale",Vector2(1.25,1.25),Vector2.ONE,0.25,Tween.TRANS_BOUNCE)
+		tween.interpolate_property($Polygon2D,"rect_position",-($Polygon2D.rect_size/2)*1.25+polygon_pos/2,polygon_pos,0.25,Tween.TRANS_BOUNCE)
 	tween.start()
 	tween.connect("tween_all_completed",self,"remove_object",[tween])
 	

@@ -1,15 +1,12 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://scenes/Ball.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/paddle.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scripts/object_data.gd" type="Script" id=3]
 [ext_resource path="res://scripts/main.gd" type="Script" id=4]
-
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 24, 600 )
-
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 256, 16 )
+[ext_resource path="res://textures/pinball_orb.png" type="Texture" id=5]
+[ext_resource path="res://textures/pinball_special_blocker.png" type="Texture" id=6]
+[ext_resource path="res://textures/pinball_side_roller.png" type="Texture" id=7]
 
 [sub_resource type="CircleShape2D" id=3]
 radius = 0.01
@@ -18,7 +15,59 @@ radius = 0.01
 radius = 0.01
 
 [sub_resource type="RectangleShape2D" id=5]
-extents = Vector2( 16, 16 )
+extents = Vector2( 8, 16 )
+
+[sub_resource type="Animation" id=6]
+resource_name = "new"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Ball:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 256, 664 ), Vector2( 256, 524 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Ball:delayed")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Ball:mode")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 1, 0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Ball:fired")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 4 )
@@ -26,11 +75,13 @@ actions = [ [ false, null, null, false, false, false ] ]
 action_point_rewards = [ -1 ]
 
 [node name="Ball" parent="." instance=ExtResource( 1 )]
-position = Vector2( 256, 600 )
+position = Vector2( 256, 524 )
 mass = 0.75
 gravity_scale = 2.0
+applied_torque = 8.0
+delayed = false
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="." groups=["Bouncer"]]
 position = Vector2( 0, -600 )
 __meta__ = {
 "_edit_group_": true
@@ -47,31 +98,19 @@ __meta__ = {
 
 [node name="border" type="StaticBody2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="border"]
-position = Vector2( -8, 0 )
-shape = SubResource( 1 )
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="border"]
-position = Vector2( 520, 0 )
-shape = SubResource( 1 )
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="border"]
-position = Vector2( 256, -608 )
-shape = SubResource( 2 )
-
-[node name="CollisionShape2D4" type="CollisionShape2D" parent="border"]
-position = Vector2( 256, 632 )
-shape = SubResource( 2 )
-
 [node name="Polygon2D" type="Polygon2D" parent="border"]
+color = Color( 0, 0, 0, 1 )
 polygon = PoolVector2Array( 16, -600, 496, -600, 496, 616, 536, 616, 536, -624, -24, -624, -24, 616, 16, 616 )
 
+[node name="Col" type="CollisionPolygon2D" parent="border"]
+polygon = PoolVector2Array( 16, 616, -24, 616, -24, -624, 536, -624, 536, 616, 496, 616, 496, -600, 16, -600 )
+
 [node name="Lpaddle" parent="." instance=ExtResource( 2 )]
-position = Vector2( 128, 520 )
+position = Vector2( 136, 536 )
 paddle_force = Vector2( 0, -1200 )
 
 [node name="Rpaddle" parent="." instance=ExtResource( 2 )]
-position = Vector2( 384, 520 )
+position = Vector2( 376, 536 )
 scale = Vector2( -1, 1 )
 paddle_side = true
 paddle_force = Vector2( 0, -1200 )
@@ -142,7 +181,7 @@ __meta__ = {
 }
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
-position = Vector2( 496, -168 )
+position = Vector2( 496, -128 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true
@@ -157,14 +196,19 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D2"]
-polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D2"]
+margin_left = -48.0
+margin_bottom = 37.0
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
 [node name="StaticBody2D8" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
-position = Vector2( 496, -232 )
+position = Vector2( 496, -200 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true,
@@ -180,14 +224,19 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D8"]
-polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D8"]
+margin_left = -48.0
+margin_bottom = 37.0
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
 [node name="StaticBody2D9" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
-position = Vector2( 496, -296 )
+position = Vector2( 496, -272 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true
@@ -202,20 +251,25 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D9"]
-polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D9"]
+margin_left = -48.0
+margin_bottom = 37.0
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
 [node name="StaticBody2D15" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
-position = Vector2( 80, -288 )
+position = Vector2( 128, -376 )
 scale = Vector2( 0.5, 0.5 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true
 }
-bounce_force = 64.0
+bounce_force = 256.0
 point_count_for_hit = 50
 
 [node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D15"]
@@ -224,20 +278,26 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D15"]
-polygon = PoolVector2Array( -8, 40, 8, 40, 24, 32, 32, 24, 40, 8, 40, -8, 32, -24, 24, -32, 8, -40, -8, -40, -24, -32, -32, -24, -40, -8, -40, 8, -32, 24, -24, 32 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D15"]
+margin_left = -40.0
+margin_top = -40.0
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 5 )
+expand = true
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
 [node name="StaticBody2D16" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
-position = Vector2( 128, -352 )
+position = Vector2( 184, -320 )
 scale = Vector2( 0.5, 0.5 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true
 }
-bounce_force = 64.0
+bounce_force = 256.0
 point_count_for_hit = 50
 
 [node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D16"]
@@ -246,20 +306,54 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D16"]
-polygon = PoolVector2Array( -8, 40, 8, 40, 24, 32, 32, 24, 40, 8, 40, -8, 32, -24, 24, -32, 8, -40, -8, -40, -24, -32, -32, -24, -40, -8, -40, 8, -32, 24, -24, 32 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D16"]
+margin_left = -40.0
+margin_top = -40.0
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 5 )
+expand = true
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
-[node name="StaticBody2D18" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
-position = Vector2( 176, -288 )
+[node name="StaticBody2D17" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 72, -320 )
 scale = Vector2( 0.5, 0.5 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true
 }
-bounce_force = 64.0
+bounce_force = 256.0
+point_count_for_hit = 50
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D17"]
+polygon = PoolVector2Array( -8, 40, 8, 40, 24, 32, 32, 24, 40, 8, 40, -8, 32, -24, 24, -32, 8, -40, -8, -40, -24, -32, -32, -24, -40, -8, -40, 8, -32, 24, -24, 32 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D17"]
+margin_left = -40.0
+margin_top = -40.0
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 5 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false,
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D18" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
+position = Vector2( 128, -264 )
+scale = Vector2( 0.5, 0.5 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+bounce_force = 256.0
 point_count_for_hit = 50
 
 [node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D18"]
@@ -268,14 +362,20 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D18"]
-polygon = PoolVector2Array( -8, 40, 8, 40, 24, 32, 32, 24, 40, 8, 40, -8, 32, -24, 24, -32, 8, -40, -8, -40, -24, -32, -32, -24, -40, -8, -40, 8, -32, 24, -24, 32 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D18"]
+margin_left = -40.0
+margin_top = -40.0
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 5 )
+expand = true
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
 [node name="StaticBody2D10" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
-position = Vector2( 496, -360 )
+position = Vector2( 496, -344 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true
@@ -290,9 +390,14 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D10"]
-polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D10"]
+margin_left = -48.0
+margin_bottom = 37.0
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
@@ -318,14 +423,20 @@ __meta__ = {
 }
 
 [node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D4"]
-polygon = PoolVector2Array( 104, 24, 48, 16, 24, 8, 8, -8, 0, -32, 0, 72, 104, 48 )
+polygon = PoolVector2Array( 120, 32, 72, 24, 40, 16, 16, 8, 8, -8, 0, -32, 0, 48, 112, 48 )
 __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D4"]
-polygon = PoolVector2Array( 104, 24, 48, 16, 24, 8, 8, -8, 0, -32, 0, 72, 104, 48 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D4"]
+margin_top = -24.0
+margin_right = 104.0
+margin_bottom = 48.0
+texture = ExtResource( 7 )
+expand = true
+stretch_mode = 6
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
@@ -336,19 +447,26 @@ __meta__ = {
 }
 
 [node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D6"]
-polygon = PoolVector2Array( -104, 24, -48, 16, -24, 8, -8, -8, 0, -32, 0, 72, -104, 48 )
+polygon = PoolVector2Array( -120, 32, -72, 24, -40, 16, -16, 8, -8, -8, 0, -32, 0, 48, -112, 48 )
 __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D6"]
-polygon = PoolVector2Array( -104, 24, -48, 16, -24, 8, -8, -8, 0, -32, 0, 72, -104, 48 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D6"]
+margin_left = -104.0
+margin_top = -24.0
+margin_bottom = 48.0
+texture = ExtResource( 7 )
+expand = true
+stretch_mode = 6
+flip_h = true
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
 [node name="Area2D" type="Area2D" parent="objects"]
-position = Vector2( 480, -192 )
+position = Vector2( 480, -152 )
 monitoring = false
 script = ExtResource( 3 )
 __meta__ = {
@@ -376,7 +494,7 @@ __meta__ = {
 }
 
 [node name="StaticBody2D13" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
-position = Vector2( 496, -104 )
+position = Vector2( 496, -56 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true
@@ -388,14 +506,19 @@ point_count_for_hit = 25
 [node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D13"]
 polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D13"]
-polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D13"]
+margin_left = -48.0
+margin_bottom = 37.0
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
 [node name="Area2D6" type="Area2D" parent="objects"]
-position = Vector2( 480, -128 )
+position = Vector2( 480, -80 )
 monitoring = false
 script = ExtResource( 3 )
 __meta__ = {
@@ -423,7 +546,7 @@ __meta__ = {
 }
 
 [node name="Area2D2" type="Area2D" parent="objects"]
-position = Vector2( 480, -320 )
+position = Vector2( 480, -296 )
 monitoring = false
 script = ExtResource( 3 )
 __meta__ = {
@@ -451,7 +574,7 @@ __meta__ = {
 }
 
 [node name="StaticBody2D11" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
-position = Vector2( 496, -424 )
+position = Vector2( 496, -416 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true
@@ -466,14 +589,19 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D11"]
-polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D11"]
+margin_left = -48.0
+margin_bottom = 37.0
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
 [node name="Area2D4" type="Area2D" parent="objects"]
-position = Vector2( 480, -384 )
+position = Vector2( 480, -368 )
 monitoring = false
 script = ExtResource( 3 )
 __meta__ = {
@@ -506,7 +634,7 @@ script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true
 }
-bounce_force = 8.0
+bounce_force = 128.0
 dont_hit_bottom = true
 point_count_for_hit = 25
 
@@ -516,14 +644,19 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="objects/StaticBody2D12"]
-polygon = PoolVector2Array( 0, 0, -32, 8, -48, 24, -40, 32, -24, 16, 0, 10 )
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D12"]
+margin_left = -48.0
+margin_bottom = 37.0
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
 __meta__ = {
+"_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
 [node name="Area2D5" type="Area2D" parent="objects"]
-position = Vector2( 480, -456 )
+position = Vector2( 480, -448 )
 monitoring = false
 script = ExtResource( 3 )
 __meta__ = {
@@ -551,7 +684,7 @@ __meta__ = {
 }
 
 [node name="Area2D3" type="Area2D" parent="objects"]
-position = Vector2( 480, -256 )
+position = Vector2( 480, -224 )
 monitoring = false
 script = ExtResource( 3 )
 __meta__ = {
@@ -577,3 +710,6 @@ valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/new = SubResource( 6 )

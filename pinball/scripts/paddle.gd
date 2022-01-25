@@ -17,11 +17,14 @@ func _ready():
 	$Sprite.flip_h = paddle_side
 	scale.x = 1
 	target_angle = (int(!paddle_side)*2-1)*15
+
 func _input(_event):
 	if Input.is_action_just_pressed("ui_left")&&!paddle_side:
 		is_active = true
 		if ball!=null:
-			var force = (paddle_force*(1/get_tip().distance_to(ball.position))*32).rotated(rotation)
+			var force = ((paddle_force*(1/get_tip().distance_to(ball.position)*32)).rotated(rotation))
+			if force.length() > paddle_force.length():
+				force=force.normalized()*paddle_force.length()
 			ball.apply_central_impulse(force)
 			ball.paddle_hit(force)
 		target_angle = -30
@@ -31,7 +34,9 @@ func _input(_event):
 	if Input.is_action_just_pressed("ui_right")&&paddle_side:
 		is_active = true
 		if ball!=null:
-			var force = (paddle_force*(1/get_tip().distance_to(ball.position))*32).rotated(rotation)
+			var force = (paddle_force*(1/get_tip().distance_to(ball.position)*32)).rotated(rotation)
+			if force.length() > paddle_force.length():
+				force=force.normalized()*paddle_force.length()
 			ball.apply_central_impulse(force)
 			ball.paddle_hit(force)
 		target_angle = 30
@@ -41,4 +46,4 @@ func _input(_event):
 func _process(delta):
 	rotation_degrees += (target_angle-rotation_degrees)*delta*20
 func get_tip():
-	return (position+(Vector2(48*(int(!paddle_side)*2-1),0).rotated(rotation)))
+	return (position+(Vector2(96*(int(!paddle_side)*2-1),0).rotated(rotation)))
