@@ -12,10 +12,25 @@ export(String)var action_name=""
 export(String)var action_value=""
 export(String)var action_group=""
 export(int)var point_count_for_hit = 100
+export(bool)var float_around=false
+export(float)var float_range=0.0
+var float_offsets=0.0
+var float_offset_y=0.0
 var polygon_pos = Vector2.ZERO
+var start_pos = Vector2.ZERO
 var active=false
+var cur_float_pos = 0.0
 func _ready():
-	
+	randomize()
+	if float_around:
+		float_offset_y = rand_range(0.0,PI*1.5)
+		float_offsets = rand_range(0.0,PI*1.5)
+		var timer = Timer.new()
+		add_child(timer)
+		timer.connect('timeout',self,'update_float')
+		timer.wait_time = 0.025
+		start_pos = $Sprite.rect_position
+		timer.start()
 	if get_node_or_null("Polygon2D")!=null&&$Polygon2D.get_class()!="Polygon2D":
 		polygon_pos=$Polygon2D.rect_position
 	if action_object:
@@ -24,6 +39,11 @@ func _ready():
 		add_to_group(action_group)
 		modulate=Color(0.5,0.5,0.5,1.0)
 func get_bouncy():return bounce_force
+func update_float():
+	cur_float_pos += 0.05
+	if cur_float_pos>=2*PI:
+		cur_float_pos-=2*PI
+	$Sprite.rect_position = start_pos+Vector2(sin(cur_float_pos+float_offsets),cos(cur_float_pos+float_offsets+float_offset_y))*float_range
 func entered():
 	if active:return
 	modulate=Color(1.0,1.0,1.0,1.0)

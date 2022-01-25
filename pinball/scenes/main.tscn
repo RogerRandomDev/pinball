@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://scenes/Ball.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/paddle.tscn" type="PackedScene" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://textures/pinball_orb.png" type="Texture" id=5]
 [ext_resource path="res://textures/pinball_special_blocker.png" type="Texture" id=6]
 [ext_resource path="res://textures/pinball_side_roller.png" type="Texture" id=7]
+[ext_resource path="res://textures/background.png" type="Texture" id=8]
 
 [sub_resource type="CircleShape2D" id=3]
 radius = 0.01
@@ -69,17 +70,19 @@ tracks/3/keys = {
 "values": [ true, false ]
 }
 
+[sub_resource type="Animation" id=7]
+resource_name = "idle"
+
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 4 )
 actions = [ [ false, null, null, false, false, false ] ]
 action_point_rewards = [ -1 ]
 
 [node name="Ball" parent="." instance=ExtResource( 1 )]
-position = Vector2( 256, 524 )
+position = Vector2( 256, 488 )
+mode = 1
 mass = 0.75
 gravity_scale = 2.0
-applied_torque = 8.0
-delayed = false
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." groups=["Bouncer"]]
 position = Vector2( 0, -600 )
@@ -127,10 +130,14 @@ position = Vector2( 256, 0 )
 node_a = NodePath("../screen center")
 node_b = NodePath("../Cam")
 length = 1.0
+rest_length = 1.0
 stiffness = 30.0
 
 [node name="Cam" type="RigidBody2D" parent="."]
 position = Vector2( 256, 0 )
+mass = 0.1
+gravity_scale = 0.0
+linear_damp = 10.0
 
 [node name="Camera2D" type="Camera2D" parent="Cam"]
 offset = Vector2( 0, 0.005 )
@@ -346,6 +353,31 @@ __meta__ = {
 "_editor_description_": ""
 }
 
+[node name="StaticBody2D19" type="StaticBody2D" parent="objects"]
+position = Vector2( 16, -160 )
+scale = Vector2( 0.5, 0.5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Col" type="CollisionPolygon2D" parent="objects/StaticBody2D19"]
+polygon = PoolVector2Array( 0, -96, 16, -48, 32, -16, 48, 0, 80, 16, 144, 32, 256, 48, 256, 64, 0, 96 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="TextureRect" parent="objects/StaticBody2D19"]
+margin_top = -96.0
+margin_right = 256.0
+margin_bottom = 96.0
+texture = ExtResource( 7 )
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false,
+"_editor_description_": ""
+}
+
 [node name="StaticBody2D18" type="StaticBody2D" parent="objects" groups=["Bouncer"]]
 position = Vector2( 128, -264 )
 scale = Vector2( 0.5, 0.5 )
@@ -476,6 +508,8 @@ action_object = true
 action_name = "Action"
 action_value = "[0,0]"
 action_group = "Power"
+float_around = true
+float_range = 4.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D"]
 shape = SubResource( 5 )
@@ -528,6 +562,8 @@ action_object = true
 action_name = "Action"
 action_value = "[0,1]"
 action_group = "Power"
+float_around = true
+float_range = 4.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D6"]
 shape = SubResource( 5 )
@@ -556,6 +592,8 @@ action_object = true
 action_name = "Action"
 action_value = "[0,2]"
 action_group = "Power"
+float_around = true
+float_range = 4.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D2"]
 shape = SubResource( 5 )
@@ -611,6 +649,8 @@ action_object = true
 action_name = "Action"
 action_value = "[0,3]"
 action_group = "Power"
+float_around = true
+float_range = 4.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D4"]
 shape = SubResource( 5 )
@@ -666,6 +706,8 @@ action_object = true
 action_name = "Action"
 action_value = "[0,4]"
 action_group = "Power"
+float_around = true
+float_range = 4.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D5"]
 shape = SubResource( 5 )
@@ -694,6 +736,8 @@ action_object = true
 action_name = "Action"
 action_value = "[0,5]"
 action_group = "Power"
+float_around = true
+float_range = 4.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="objects/Area2D3"]
 shape = SubResource( 5 )
@@ -713,3 +757,19 @@ __meta__ = {
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/new = SubResource( 6 )
+
+[node name="game_actions" type="AnimationPlayer" parent="."]
+anims/idle = SubResource( 7 )
+
+[node name="TextureRect" type="TextureRect" parent="."]
+show_behind_parent = true
+margin_left = -32.0
+margin_top = -656.0
+margin_right = 536.0
+margin_bottom = 688.0
+texture = ExtResource( 8 )
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}

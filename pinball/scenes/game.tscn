@@ -1,21 +1,23 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/main.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/game.gd" type="Script" id=2]
 
 [sub_resource type="Environment" id=1]
 background_mode = 4
 glow_enabled = true
-glow_bloom = 0.34
-glow_hdr_threshold = 0.5
+glow_intensity = 1.5
 adjustment_enabled = true
-adjustment_contrast = 1.5
+adjustment_contrast = 1.2
 
 [sub_resource type="World" id=2]
 environment = SubResource( 1 )
 
 [node name="Control" type="Control"]
+pause_mode = 2
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -51,6 +53,17 @@ usage = 0
 render_target_update_mode = 3
 
 [node name="Node2D" parent="0/M/Viewport" instance=ExtResource( 1 )]
+pause_mode = 1
+
+[node name="Label" type="Label" parent="0/M"]
+visible = false
+margin_left = 64.0
+margin_top = 128.0
+margin_right = 320.0
+margin_bottom = 159.0
+text = "GAME OVER
+PRESS ENTER TO RESTART"
+align = 1
 
 [node name="R" type="Panel" parent="0"]
 margin_left = 512.0
@@ -58,12 +71,35 @@ margin_right = 1024.0
 margin_bottom = 600.0
 rect_min_size = Vector2( 512, 600 )
 
-[node name="Score" type="Label" parent="0/R"]
+[node name="0" type="VSplitContainer" parent="0/R"]
 margin_top = 32.0
 margin_right = 256.0
-margin_bottom = 96.0
+margin_bottom = 173.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Score" type="Label" parent="0/R/0"]
+margin_right = 256.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 256, 128 )
 text = "SCORE:
 0"
+align = 1
+autowrap = true
+clip_text = true
+uppercase = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Lives" type="Label" parent="0/R/0"]
+margin_top = 140.0
+margin_right = 256.0
+margin_bottom = 172.0
+rect_min_size = Vector2( 256, 32 )
+text = "LIVES:
+*****"
 align = 1
 autowrap = true
 clip_text = true

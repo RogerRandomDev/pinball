@@ -10,12 +10,14 @@ var do_load=true
 export var delayed = true
 func _ready():
 	randomize()
-	#fire_ball()
+	prepare_to_fire_ball()
+	get_parent().cur_lives+=1
 # warning-ignore:unused_argument
 func _process(delta):
 	if (position.y > 592||!fired)&&!delayed:
 		if do_load:
 			get_parent().get_node("AnimationPlayer").play("new")
+			get_parent().remove_live()
 			do_load = false
 			fire_force = 0.0
 			launch_angle = 0.0
@@ -27,6 +29,7 @@ func _process(delta):
 		
 	if linear_velocity.length_squared() >=16777216:
 		linear_velocity = linear_velocity.normalized()*4096
+	#$AudioStreamPlayer.pitch_scale = max(linear_velocity.length()/512,1)
 func _on_check_body_entered(body):
 	get_parent().play_sfx("bounce.wav")
 	if body.is_in_group("Bouncer"):
